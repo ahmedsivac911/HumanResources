@@ -7,6 +7,8 @@ package com.zira.humanresources;
 
 import com.zira.humanresources.models.Employee;
 import com.zira.humanresources.models.Employees;
+import com.zira.humanresources.models.Jobs;
+import com.zira.humanresources.models.Jobs.Job;
 import java.util.Set;
 
 /**
@@ -18,9 +20,21 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        testEmployeeGetInsertUpdate();
+         //testEmployeeGetInsertUpdate();
         //testGetEmployeesByDepartment(60);
+        //Set<Job> jobs = testGetJobsBySalaryRange(4000, 15000);
+        //Set<Job> jobs = Jobs.getJobsByMaximumSalary(7000);
+        //Set<Job> jobs = Jobs.getJobsByMinimumSalary(7000);
+        //jobs.forEach((job) -> {
+          //  System.out.println(job);
+        //});
+        
     }   
+
+    private static Set<Job> testGetJobsBySalaryRange(int minSalary, int maxSalary) {
+        Set<Job> jobs = Jobs.getJobsBySalaryRange(minSalary, maxSalary);
+        return jobs;
+    }
 
     private static void testGetEmployeesByDepartment(int departmentID) {
         Set<Employee> employees = Employees.getEmployeesFromDepartment(departmentID);
