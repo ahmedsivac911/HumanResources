@@ -12,8 +12,6 @@ import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -65,19 +63,7 @@ public class Employees {
     }
 
     private static boolean updateEmployee(Employee employee, boolean retryFlag) {
-        //See overloaded metod updateEmployee(Employee employee) for explanation
-        StringBuilder sqlPrepareStringBuilder = new StringBuilder();
-        sqlPrepareStringBuilder.append("UPDATE EMPLOYEES "
-                + "SET FIRST_NAME = ?, LAST_NAME = ?, EMAIL = ?, PHONE_NUMBER = ?, SALARY = ?");
-        
-        //If first try then update job and department as well
-        if(!retryFlag){
-            sqlPrepareStringBuilder.append(", DEPARTMENT_ID = ?, JOB_ID = ?");
-        }
-        
-        sqlPrepareStringBuilder.append(" WHERE EMPLOYEE_ID = ");
-        sqlPrepareStringBuilder.append(employee.getId());
-        String sqlPrepareString = sqlPrepareStringBuilder.toString();
+        String sqlPrepareString = getUpdateSQLPrepareString(employee, retryFlag);
         try(Connection dbConn = DBUtil.getConnection();
             PreparedStatement pstmt = dbConn.prepareStatement(sqlPrepareString))
         {
@@ -89,11 +75,26 @@ public class Employees {
             int rows = pstmt.executeUpdate();
             return (rows == 1);
         } catch (SQLException ex) {
-            if(ex.getClass().getSimpleName().equals("SQLIntegrityConstraintViolationException") && !retryFlag){}
+            if(ex.getClass().getSimpleName().equals(SQLIntegrityConstraintViolationException.class.getSimpleName()) && !retryFlag){}
             else
                 DBUtil.showExceptionMessage(ex);
         }
         return false;
+    }
+
+    private static String getUpdateSQLPrepareString(Employee employee, boolean retryFlag) {
+        //See overloaded metod updateEmployee(Employee employee) for explanation
+        StringBuilder sqlPrepareStringBuilder = new StringBuilder();
+        sqlPrepareStringBuilder.append("UPDATE EMPLOYEES "
+                + "SET FIRST_NAME = ?, LAST_NAME = ?, EMAIL = ?, PHONE_NUMBER = ?, SALARY = ?");
+        //If first try then update job and department as well
+        if(!retryFlag){
+            sqlPrepareStringBuilder.append(", DEPARTMENT_ID = ?, JOB_ID = ?");
+        }
+        sqlPrepareStringBuilder.append(" WHERE EMPLOYEE_ID = ");
+        sqlPrepareStringBuilder.append(employee.getId());
+        String sqlPrepareString = sqlPrepareStringBuilder.toString();
+        return sqlPrepareString;
     }
     
     private static boolean updateEmployee(Employee employee) {
