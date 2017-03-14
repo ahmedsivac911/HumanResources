@@ -5,7 +5,7 @@ This project is my Java Practice project that uses Oracle DB HR user and its' ta
 Important models (classes):
 
   DBUtil:
-    - Uses Properties object to load connection information and then creates pooling connection
+    - Uses Properties object to load connection information from XML file and then creates pooling connections.
     
   Employees:
     - This class serves as a communicator to EMPLOYEES table in HR database. It can accept objects of type Employee and store them, 
