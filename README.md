@@ -17,4 +17,10 @@ Important models (classes):
     - This class serves to instantiate objects which represent rows from EMPLOYEES table in HR database. Alongside getters, setters and 
     overloaded constructors, it allows Employee to store itself to database in a simple way by implicitly using Employees class.
     
+  Jobs:
+     - Contains nested class Job which is used to instantiate and represent rows from JOBS table in HR database.
+     Jobs class serves to communicate to JOBS table in HR database. It can get job by either JOB_TITLE or JOB_ID (both in the same method
+     so you don't need to worry which one you're passing), as well as by an instance of Employee. Can also get Set of instances of the nested
+     class Job by MIN_SALARY, MAX_SALARY or by the combination of those two.
+    
 Further updates incoming....
