@@ -5,9 +5,10 @@
  */
 package com.zira.humanresources;
 
+import com.zira.humanresources.models.DBUtil;
+import com.zira.humanresources.models.DBType;
 import java.sql.Connection;
 import java.sql.SQLException;
-import junit.framework.Assert;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -46,8 +47,7 @@ public class DBUtilTest {
     @Test
     public void testGetConnection() throws Exception {
         System.out.println("getConnection");
-        DBType dbType = DBType.ORACLEDB;
-        Connection result = DBUtil.getConnection(dbType);
+        Connection result = DBUtil.getConnection();
         assertNotNull(result);
     }
 
