@@ -12,6 +12,8 @@ import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -141,6 +143,7 @@ public class Employees {
     }
 
     private static Employee createEmployeeFromRow(ResultSet rs) throws SQLException {
+        //returns an instance of Employee given a row of ResultSet
         int eid = rs.getInt("EMPLOYEE_ID");
         String eFirstName = rs.getString("FIRST_NAME");
         String eLastName = rs.getString("LAST_NAME");
@@ -150,6 +153,27 @@ public class Employees {
         double eSalary = rs.getDouble("SALARY");
         int eDepartmentId = rs.getInt("DEPARTMENT_ID");
         return new Employee(eid, eFirstName, eLastName, eEmail, ePhoneNumber, eJobId, eSalary, eDepartmentId);
+    }
+    
+    public static Set<Employee> getManagers(){
+        //gets all the companies managers using inner join with DEPARTMENTS table
+        //returns results as a set of employees
+        
+        Set<Employee> managers = new HashSet();
+        
+        try(Connection dbConn = DBUtil.getConnection();
+            PreparedStatement pstmt = dbConn.prepareStatement("SELECT * FROM"
+                    + " EMPLOYEES INNER JOIN DEPARTMENTS ON EMPLOYEES.EMPLOYEE_ID = DEPARTMENTS.MANAGER_ID"
+                    + " AND EMPLOYEES.DEPARTMENT_ID = DEPARTMENTS.DEPARTMENT_ID"))
+        {
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next())
+                managers.add(createEmployeeFromRow(rs));
+        } catch (SQLException ex) {
+            DBUtil.showExceptionMessage(ex);
+        }
+        
+        return managers;
     }
     
 }

@@ -28,7 +28,10 @@ public class Main {
         //jobs.forEach((job) -> {
           //  System.out.println(job);
         //});
-        
+        Set<Employee> managers = Employees.getManagers();
+        managers.forEach((manager) -> {
+            System.out.println(manager);
+        });
     }   
 
     private static Set<Job> testGetJobsBySalaryRange(int minSalary, int maxSalary) {
