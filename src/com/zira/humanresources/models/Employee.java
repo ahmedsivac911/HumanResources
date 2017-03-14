@@ -5,11 +5,14 @@
  */
 package com.zira.humanresources.models;
 
+import com.zira.humanresources.models.Jobs.Job;
+
 /**
  *
  * @author Ahmed_S
  */
 public class Employee implements ComparableEmployee{
+
     private final int id;
     private String firstName;
     private String lastName;
@@ -17,7 +20,25 @@ public class Employee implements ComparableEmployee{
     private String phoneNumber;
     private String jobId;
     private double salary;
+    private int managerId;
     private int departmentId;
+    private Job job;
+    
+    /**
+     * @return the job
+     */
+    public Job getJob() {
+        return job;
+    }
+    
+    public void setJob(Job job){
+        this.job = job;
+    }
+    
+    public void setJob(String jobId){
+        Jobs.getJobByEmployee(this);
+    }
+    
     /**
      * @return the id
      */
@@ -109,7 +130,19 @@ public class Employee implements ComparableEmployee{
     public void setSalary(double salary) {
         this.salary = salary;
     }
+    /**
+     * @return the managerId
+     */
+    public int getManagerId() {
+        return managerId;
+    }
 
+    /**
+     * @param managerId the managerId to set
+     */
+    public void setManagerId(int managerId) {
+        this.managerId = managerId;
+    }
     /**
      * @return the departmentId
      */
