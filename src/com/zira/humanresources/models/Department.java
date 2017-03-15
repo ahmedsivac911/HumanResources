@@ -52,7 +52,7 @@ public class Department {
     
     public void setManager(Employee manager) throws IllegalArgumentException {
         Employee oldManager = this.manager;
-        if (manager != null && Employees.getEmployeeByID(manager.getId()) != null){
+        if (manager != null && Employees.getEmployeeByID(manager.getId()) != null && manager.getDepartmentId() == this.departmentId && this.manager.storeToDatabase()){
             try{
                 this.manager = manager;
                 this.updateDepartment();
