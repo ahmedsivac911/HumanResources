@@ -156,7 +156,7 @@ public class Employees {
     }
     
     public static Set<Employee> getManagers(){
-        //gets all the companies managers using inner join with DEPARTMENTS table
+        //gets all the companie's managers using inner join with DEPARTMENTS table
         //returns results as a set of employees
         
         Set<Employee> managers = new HashSet();
