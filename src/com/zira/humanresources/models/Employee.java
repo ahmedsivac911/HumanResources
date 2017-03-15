@@ -122,14 +122,6 @@ public class Employee implements Comparable<Employee>{
         return jobId;
     }
 
-    public void setJob(String jobIdOrJobTitle) throws JobNotFoundException {
-        Job newJob = Jobs.getJobByIdOrTitle(jobIdOrJobTitle);
-        if(newJob != null)
-            this.job = newJob;
-        else
-            throw new JobNotFoundException();
-    }
-
     /**
      * @return the salary
      */
@@ -173,7 +165,13 @@ public class Employee implements Comparable<Employee>{
         this.departmentId = departmentId;
     }
     
-    
+    public void setJob(String jobIdOrJobTitle) throws JobNotFoundException {
+        Job newJob = Jobs.getJobByIdOrTitle(jobIdOrJobTitle);
+        if(newJob != null)
+            this.job = newJob;
+        else
+            throw new JobNotFoundException();
+    }
     //Class constructors
     public Employee (String lastName, String email, String jobId){
         this.id = 0;
@@ -184,7 +182,7 @@ public class Employee implements Comparable<Employee>{
             this.setJob(jobId);
         }
         catch(JobNotFoundException e){
-            System.out.println("Warning: couldn't get Job for this employee: " + this);
+            System.out.println("Warning: couldn't get Job for this employee.");
         }
         this.setMinMaxSalary(jobId);
         this.salary = minimumSalary;
@@ -223,7 +221,7 @@ public class Employee implements Comparable<Employee>{
         return this.job.getJobTitle();
     }
     
-    public boolean isManager(){
+    boolean isManager(){
         return Employees.getManagers().contains(this);
     }
     

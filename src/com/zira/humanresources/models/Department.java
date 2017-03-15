@@ -51,19 +51,16 @@ public class Department {
     }
     
     public void setManager(Employee manager) throws IllegalArgumentException {
-        Employee oldManager = this.manager;
-        if (manager != null && Employees.getEmployeeByID(manager.getId()) != null && manager.getDepartmentId() == this.departmentId && this.manager.storeToDatabase()){
-            try{
-                this.manager = manager;
-                this.updateDepartment();
-            }
-            catch(SQLException e){
-                DBUtil.showExceptionMessage(e);
-                this.manager = oldManager;
-            }
-        }
-        else{
-            throw new IllegalArgumentException("Given manager must be stored in a database first.");
+        if(manager.isManager())
+            throw new IllegalArgumentException("Given person is already a manager of one department.");
+        if(!Employees.getEmployeesFromDepartment(departmentId).contains(manager))
+            throw new IllegalArgumentException("Given person must already be in this department to become a manager of it.");
+        try{
+            manager.storeToDatabase();
+            this.manager = manager;
+            this.updateDepartment();
+        } catch (SQLException e) {
+            DBUtil.showExceptionMessage(e);
         }
     }
     

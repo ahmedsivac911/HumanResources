@@ -4,8 +4,12 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/Ahmed_S/Documents/NetBeansProjects/HumanResources/src/com/zira/humanresources/models/Jobs.java</file>
+            <file>file:/C:/Users/Ahmed_S/Documents/NetBeansProjects/HumanResources/src/com/zira/humanresources/models/Location.java</file>
             <file>file:/C:/Users/Ahmed_S/Documents/NetBeansProjects/HumanResources/src/com/zira/humanresources/Main.java</file>
             <file>file:/C:/Users/Ahmed_S/Documents/NetBeansProjects/HumanResources/src/com/zira/humanresources/models/Employee.java</file>
+            <file>file:/C:/Users/Ahmed_S/Documents/NetBeansProjects/HumanResources/src/com/zira/humanresources/models/Departments.java</file>
+            <file>file:/C:/Users/Ahmed_S/Documents/NetBeansProjects/HumanResources/src/com/zira/humanresources/models/Locations.java</file>
+            <file>file:/C:/Users/Ahmed_S/Documents/NetBeansProjects/HumanResources/src/com/zira/humanresources/models/Department.java</file>
             <file>file:/C:/Users/Ahmed_S/Documents/NetBeansProjects/HumanResources/src/com/zira/humanresources/models/Employees.java</file>
             <file>file:/C:/Users/Ahmed_S/Documents/NetBeansProjects/HumanResources/src/com/zira/humanresources/models/DBUtil.java</file>
         </group>

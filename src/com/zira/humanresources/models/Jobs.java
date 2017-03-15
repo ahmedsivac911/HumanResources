@@ -108,21 +108,20 @@ public class Jobs {
         //first tries to find job by JOB_ID
         //then tries to find job by JOB_TITLE
         //returns instance of nested class Job
-        PreparedStatement pstmt;
-        try(Connection dbConn = DBUtil.getConnection())
-        {   
-            pstmt = dbConn.prepareStatement("SELECT * FROM JOBS WHERE JOB_ID = ?");
-            pstmt.setNString(1, jobIdOrJobTitle);
+        try(Connection dbConn = DBUtil.getConnection();
+            PreparedStatement pstmt = dbConn.prepareStatement("SELECT * FROM JOBS WHERE JOB_ID = ?");
+            PreparedStatement pstmt2 = dbConn.prepareStatement("SELECT * FROM JOBS WHERE JOB_TITLE = ?"))
+        {      
+            pstmt.setString(1, jobIdOrJobTitle);
             ResultSet rs = pstmt.executeQuery();
             if(rs.next()){
                 return new Job(rs.getString("JOB_ID"), rs.getString("JOB_TITLE"), rs.getInt("MIN_SALARY"), rs.getInt("MAX_SALARY"));
             }
             else{
-                pstmt = dbConn.prepareStatement("SELECT * FROM JOBS WHERE JOB_TITLE = ?");
-                pstmt.setString(1, jobIdOrJobTitle);
-                rs = pstmt.executeQuery();
-                if(rs.next())
-                    return new Job(rs.getString("JOB_ID"), rs.getString("JOB_TITLE"), rs.getInt("MIN_SALARY"), rs.getInt("MAX_SALARY"));
+                pstmt2.setString(1, jobIdOrJobTitle);
+                ResultSet rs2 = pstmt2.executeQuery();
+                if(rs2.next())
+                    return new Job(rs2.getString("JOB_ID"), rs2.getString("JOB_TITLE"), rs2.getInt("MIN_SALARY"), rs2.getInt("MAX_SALARY"));
             }
         }catch (SQLException ex) {
             DBUtil.showExceptionMessage(ex);
