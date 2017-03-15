@@ -14,7 +14,7 @@ import java.util.Map;
  *
  * @author Ahmed_S
  */
-public class Employee {
+public class Employee implements Comparable<Employee>{
 
     private final int id;
     private String firstName;
@@ -223,16 +223,34 @@ public class Employee {
         return this.job.getJobTitle();
     }
     
+    public boolean isManager(){
+        return Employees.getManagers().contains(this);
+    }
+    
     @Override
     public String toString(){
         String formatString = "%-8d%-20s%-20s%-25s%-20s%-10.2f";
         return String.format(formatString, getId(), getFirstName(), getLastName(), getEmail(), getJobTitle(), getSalary());
     }
     
-    public boolean equals(Employee other){
-        return (this.id == other.getId() && this.lastName.equals(other.email) && this.email.equals(other.email));
+    @Override
+    public boolean equals(Object otherObject){
+        if(otherObject == null)
+            return false;
+        if(!Employee.class.isAssignableFrom(otherObject.getClass()))
+            return false;
+        final Employee otherEmployee = (Employee) otherObject;
+        return this.id == otherEmployee.id;
     }   
 
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 47 * hash + this.id;
+        return hash;
+    }
+
+    @Override
     public int compareTo(Employee other) {
         return(this.id - other.id);
     }

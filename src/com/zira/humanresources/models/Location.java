@@ -55,4 +55,21 @@ public class Location {
     public String toString(){
         return String.format("%-10d%-30s%-20s%-20s", this.getId(), this.getAddress(), this.getCity(), this.getCountry());
     }
+    
+    @Override
+    public boolean equals(Object otherObject){
+        if(otherObject == null)
+            return false;
+        if(!Location.class.isAssignableFrom(otherObject.getClass()))
+            return false;
+        Location otherLocation = (Location) otherObject;
+        return this.id == otherLocation.id;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 71 * hash + this.id;
+        return hash;
+    }
 }

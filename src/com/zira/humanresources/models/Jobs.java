@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 /**
  *
@@ -83,7 +84,25 @@ public class Jobs {
         public String toString(){
             return this.jobTitle;
         }
-}
+        
+        @Override
+        public boolean equals (Object otherObject){
+            if(otherObject == null)
+                return false;
+            if(!Job.class.isAssignableFrom(otherObject.getClass()))
+                return false;
+            Job otherJob = (Job) otherObject;
+            return this.jobId.equals(otherJob.jobId) || this.jobTitle.equals(otherJob.jobTitle);
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 5;
+            hash = 83 * hash + Objects.hashCode(this.jobId);
+            hash = 83 * hash + Objects.hashCode(this.jobTitle);
+            return hash;
+        }
+    }
     
     public static Job getJobByIdOrTitle(String jobIdOrJobTitle){
         //first tries to find job by JOB_ID
