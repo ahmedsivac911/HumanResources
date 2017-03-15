@@ -6,12 +6,15 @@
 package com.zira.humanresources.models;
 
 import com.zira.humanresources.models.Jobs.Job;
+import com.zira.humanresources.models.exceptions.JobNotFoundException;
+import com.zira.humanresources.models.exceptions.SalaryOutOfRangeException;
+import java.util.Map;
 
 /**
  *
  * @author Ahmed_S
  */
-public class Employee implements ComparableEmployee{
+public class Employee {
 
     private final int id;
     private String firstName;
@@ -23,22 +26,31 @@ public class Employee implements ComparableEmployee{
     private int managerId;
     private int departmentId;
     private Job job;
+    private int minimumSalary;
+    private int maximumSalary;
     
     /**
      * @return the job
      */
+    private void setMinMaxSalary(String jobIdOrTitle){
+        Map<String, Integer> minMaxSal = Jobs.getMinimumAndMaximumSalary(jobIdOrTitle);
+        minimumSalary = minMaxSal.get("minimumSalary");
+        maximumSalary = minMaxSal.get("maximumSalary");
+    }
+    
     public Job getJob() {
         return job;
     }
     
     public void setJob(Job job){
+        //sets a new job for employee and also checks that his salary is within range of his new minimum allowed salary and maximum allowed salary
+        setMinMaxSalary(job.getJobId());
+        if(this.salary < minimumSalary)
+            this.salary  = minimumSalary;
+        if(this.salary > maximumSalary)
+            this.salary = maximumSalary;
         this.job = job;
-    }
-    
-    public void setJob(String jobId){
-        Jobs.getJobByEmployee(this);
-    }
-    
+    }  
     /**
      * @return the id
      */
@@ -110,11 +122,12 @@ public class Employee implements ComparableEmployee{
         return jobId;
     }
 
-    /**
-     * @param jobId the jobId to set
-     */
-    public void setJobId(String jobId) {
-        this.jobId = jobId;
+    public void setJob(String jobIdOrJobTitle) throws JobNotFoundException {
+        Job newJob = Jobs.getJobByIdOrTitle(jobIdOrJobTitle);
+        if(newJob != null)
+            this.job = newJob;
+        else
+            throw new JobNotFoundException();
     }
 
     /**
@@ -127,8 +140,11 @@ public class Employee implements ComparableEmployee{
     /**
      * @param salary the salary to set
      */
-    public void setSalary(double salary) {
-        this.salary = salary;
+    public void setSalary(double salary) throws SalaryOutOfRangeException {
+        if(salary <= this.maximumSalary && salary >= this.minimumSalary)
+            this.salary = salary;
+        else
+            throw new SalaryOutOfRangeException();
     }
     /**
      * @return the managerId
@@ -164,6 +180,14 @@ public class Employee implements ComparableEmployee{
         this.lastName = lastName;
         this.email = email;
         this.jobId = jobId;
+        try{
+            this.setJob(jobId);
+        }
+        catch(JobNotFoundException e){
+            System.out.println("Warning: couldn't get Job for this employee: " + this);
+        }
+        this.setMinMaxSalary(jobId);
+        this.salary = minimumSalary;
     }
     
     public Employee (String firstName, String lastName, String email, String jobId){
@@ -181,6 +205,13 @@ public class Employee implements ComparableEmployee{
         jobId = eJobId;
         salary = eSalary;
         departmentId = eDepartmentId;
+        try{
+            this.setJob(eJobId);
+            this.setMinMaxSalary(eJobId);
+        }
+        catch(JobNotFoundException e){
+            System.out.println("Warning: couldn't get Job for this employee.");
+        }
     }
     
     //Update changes permanently to database, or insert new employee if doesn't exist
@@ -188,17 +219,20 @@ public class Employee implements ComparableEmployee{
         return Employees.storeEmployee(this);
     }
     
+    public String getJobTitle(){
+        return this.job.getJobTitle();
+    }
+    
     @Override
     public String toString(){
-        String formatString = "%-8d%-20s%-20s%-25s%-10.2f";
-        return String.format(formatString, getId(), getFirstName(), getLastName(), getEmail(), getSalary());
+        String formatString = "%-8d%-20s%-20s%-25s%-20s%-10.2f";
+        return String.format(formatString, getId(), getFirstName(), getLastName(), getEmail(), getJobTitle(), getSalary());
     }
     
     public boolean equals(Employee other){
         return (this.id == other.getId() && this.lastName.equals(other.email) && this.email.equals(other.email));
     }   
 
-    @Override
     public int compareTo(Employee other) {
         return(this.id - other.id);
     }

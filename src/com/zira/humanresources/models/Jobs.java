@@ -9,11 +9,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  *
  * @author Ahmed_S
@@ -22,7 +21,6 @@ public class Jobs {
     //not meant to be instantiated
     //used to interact with database table JOBS in HR database
     //mostly returns instances of nested class Job
-    private static final String PREPAREDSQLGETJOBSTRING = "SELECT * FROM JOBS WHERE ? = ?";
     //nested class job to protect from creating jobs all around
     //only used to instantiate a job
     public static class Job {
@@ -83,27 +81,26 @@ public class Jobs {
         
         @Override
         public String toString(){
-            return String.format("%-10s%-30s%-10.2f%-10.2f", this.getJobId(), this.getJobTitle(), 
-                    Double.valueOf(this.getMinSalary()), Double.valueOf(this.getMaxSalary()));
+            return this.jobTitle;
         }
 }
     
-    public static Job getJobById(String jobIdOrJobTitle){
+    public static Job getJobByIdOrTitle(String jobIdOrJobTitle){
         //first tries to find job by JOB_ID
         //then tries to find job by JOB_TITLE
         //returns instance of nested class Job
-        
-        try(Connection dbConn = DBUtil.getConnection();
-            PreparedStatement pstmt = dbConn.prepareStatement(PREPAREDSQLGETJOBSTRING))
-        {
-            pstmt.setString(1, "JOB_ID");
-            pstmt.setString(2, jobIdOrJobTitle);
+        PreparedStatement pstmt;
+        try(Connection dbConn = DBUtil.getConnection())
+        {   
+            pstmt = dbConn.prepareStatement("SELECT * FROM JOBS WHERE JOB_ID = ?");
+            pstmt.setNString(1, jobIdOrJobTitle);
             ResultSet rs = pstmt.executeQuery();
-            if(rs.next())
+            if(rs.next()){
                 return new Job(rs.getString("JOB_ID"), rs.getString("JOB_TITLE"), rs.getInt("MIN_SALARY"), rs.getInt("MAX_SALARY"));
+            }
             else{
-                pstmt.setString(1, "JOB_TITLE");
-                pstmt.setString(2, jobIdOrJobTitle);
+                pstmt = dbConn.prepareStatement("SELECT * FROM JOBS WHERE JOB_TITLE = ?");
+                pstmt.setString(1, jobIdOrJobTitle);
                 rs = pstmt.executeQuery();
                 if(rs.next())
                     return new Job(rs.getString("JOB_ID"), rs.getString("JOB_TITLE"), rs.getInt("MIN_SALARY"), rs.getInt("MAX_SALARY"));
@@ -119,10 +116,9 @@ public class Jobs {
         //if found automatically sets this employee's job member to found job
         //returns instance of nested class Job
         try(Connection dbConn = DBUtil.getConnection();
-            PreparedStatement pstmt = dbConn.prepareStatement(PREPAREDSQLGETJOBSTRING))
+            PreparedStatement pstmt = dbConn.prepareStatement("SELECT * FROM JOBS WHERE JOB_ID = ?"))
         {
-            pstmt.setString(1, "JOB_ID");
-            pstmt.setString(2, employee.getJobId());
+            pstmt.setString(1, employee.getJobId());
             ResultSet rs = pstmt.executeQuery();
             if(rs.next()){
                 Job job = new Job(rs.getString("JOB_ID"), rs.getString("JOB_TITLE"), rs.getInt("MIN_SALARY"), rs.getInt("MAX_SALARY"));
@@ -184,4 +180,24 @@ public class Jobs {
         return jobs;
     }
     
+    public static Map<String, Integer> getMinimumAndMaximumSalary(String jobIdOrJobTitle){
+        PreparedStatement pstmt;
+        Map<String, Integer> minSalMaxSal = new HashMap<>();
+        try(Connection dbConn = DBUtil.getConnection())
+        {   
+            pstmt = dbConn.prepareStatement("SELECT MIN_SALARY, MAX_SALARY FROM JOBS WHERE JOB_ID = ?");
+            pstmt.setNString(1, jobIdOrJobTitle);
+            ResultSet rs = pstmt.executeQuery();
+            if(!rs.next()){
+                pstmt = dbConn.prepareStatement("SELECT * FROM JOBS WHERE JOB_TITLE = ?");
+                pstmt.setString(1, jobIdOrJobTitle);
+                rs = pstmt.executeQuery();
+            }
+            minSalMaxSal.put("minimumSalary", rs.getInt("MIN_SALARY"));
+            minSalMaxSal.put("maximumSalary", rs.getInt("MAX_SALARY"));
+        }catch (SQLException ex) {
+            DBUtil.showExceptionMessage(ex);
+        }
+        return minSalMaxSal;
+    }
 }
