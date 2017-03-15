@@ -52,7 +52,7 @@ public class Department {
     
     public void setManager(Employee manager) throws IllegalArgumentException {
         Employee oldManager = this.manager;
-        if (manager != null && Employees.getEmployeeByID(manager.getId()) != null){
+        if (manager != null && Employees.getEmployeeByID(manager.getId()) != null && manager.getDepartmentId() == this.departmentId && this.manager.storeToDatabase()){
             try{
                 this.manager = manager;
                 this.updateDepartment();
@@ -81,5 +81,22 @@ public class Department {
     @Override
     public String toString(){
         return String.format("%-10d%-25s%-10d%-20s", this.departmentId, this.departmentName, this.manager.getId(), this.location.getAddress());
+    }
+    
+    @Override
+    public boolean equals (Object otherObject){
+        if(otherObject == null)
+            return false;
+        if(!Department.class.isAssignableFrom(otherObject.getClass()))
+            return false;
+        Department otherDepartment = (Department) otherObject;
+        return this.departmentId == otherDepartment.departmentId;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + this.departmentId;
+        return hash;
     }
 }
